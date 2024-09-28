@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Phishing Detection Tool</h1>
+
+    <!-- Unified Form for Email and URL Phishing Detection -->
+    <form id="detectionForm">
+        <label for="inputContent">Enter Email or URL:</label><br><br>
+        <textarea id="inputContent" name="content" rows="6" cols="60" placeholder="Enter email content or a URL..."></textarea><br><br>
+        <button type="submit">Check for Phishing</button>
+    </form>
+    <p id="detectionResult"></p>
+
+    <!-- Include external JavaScript from static folder -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
