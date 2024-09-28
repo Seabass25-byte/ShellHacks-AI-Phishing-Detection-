@@ -10,3 +10,4 @@ torch  # PyTorch for the URL classification model
 transformers
 openpyxl
 datasets
+torch  # PyTorch for the URL classification model
