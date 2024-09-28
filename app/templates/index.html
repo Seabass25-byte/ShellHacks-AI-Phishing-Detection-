@@ -12,6 +12,30 @@
         form {
             margin-bottom: 20px;
         }
+        #detectionResult, #educationResult {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+        }
+        #detectionResult {
+            color: #333;
+            background-color: #e0f7fa;
+            font-weight: bold;
+        }
+        #educationResult {
+            color: #2e7d32;
+            background-color: #e8f5e9;
+        }
+        .result-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .confidence {
+            font-weight: bold;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -23,7 +47,10 @@
         <textarea id="inputContent" name="content" rows="6" cols="60" placeholder="Enter email content or a URL..."></textarea><br><br>
         <button type="submit">Check for Phishing</button>
     </form>
-    <p id="detectionResult"></p>
+
+    <!-- Results Display -->
+    <div id="detectionResult"></div>
+    <div id="educationResult"></div>
 
     <!-- Include external JavaScript from static folder -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

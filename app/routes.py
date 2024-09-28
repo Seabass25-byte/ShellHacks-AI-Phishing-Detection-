@@ -1,12 +1,11 @@
-from flask import Blueprint, request, jsonify
 import pickle
 import torch
 import re
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
+from flask import Blueprint, request, jsonify
 
 # Create a Blueprint for routes
 api_bp = Blueprint('api_bp', __name__)
-
 
 # Load the Naive Bayes email classifier and vectorizer
 with open('./model/email_classifier.pkl', 'rb') as f:
@@ -24,13 +23,23 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 url_model.to(device)
 
 # Threshold value for classifying phishing
-PHISHING_THRESHOLD = 0.9  # You can tune this value
+PHISHING_THRESHOLD = 0.8  # Tune this threshold if necessary
+
+# Post-processing scaling factor (reduce phishing confidence)
+SCALING_FACTOR = 0.7  # Tune this factor to reduce confidence scores
 
 # Helper function to extract URLs from the input
 def extract_urls(content):
     url_pattern = re.compile(r'(http[s]?://\S+|www\.\S+)')
     urls = url_pattern.findall(content)
     return urls
+
+# Normalization function to ensure confidence scores add up to 100%
+def normalize_confidences(phishing_conf, legitimate_conf):
+    total_confidence = phishing_conf + legitimate_conf
+    phishing_conf_normalized = (phishing_conf / total_confidence) * 100
+    legitimate_conf_normalized = (legitimate_conf / total_confidence) * 100
+    return phishing_conf_normalized, legitimate_conf_normalized
 
 # Unified route for email and URL phishing detection
 @api_bp.route('/predict', methods=['POST'])
@@ -56,8 +65,11 @@ def predict():
             
             logits = outputs.logits
             confidence = torch.softmax(logits, dim=-1)
-            phishing_confidence = confidence[0][1].item() * 100
-            legitimate_confidence = confidence[0][0].item() * 100
+            phishing_confidence = confidence[0][1].item() * 100 * SCALING_FACTOR  # Post-process phishing confidence
+            legitimate_confidence = confidence[0][0].item() * 100  # Legitimate confidence remains unchanged
+
+            # Normalize the confidence scores
+            phishing_confidence, legitimate_confidence = normalize_confidences(phishing_confidence, legitimate_confidence)
 
             url_results.append({
                 'url': url, 
@@ -76,8 +88,11 @@ def predict():
         predicted_proba = email_classifier.predict_proba(email_vectorized)
 
         # Extract probabilities for legitimate and phishing
-        phishing_confidence = predicted_proba[0][1] * 100  # Probability of phishing
-        legitimate_confidence = predicted_proba[0][0] * 100  # Probability of legitimate
+        phishing_confidence = predicted_proba[0][1] * 100 * SCALING_FACTOR  # Post-process phishing confidence
+        legitimate_confidence = predicted_proba[0][0] * 100  # Legitimate confidence remains unchanged
+
+        # Normalize the confidence scores
+        phishing_confidence, legitimate_confidence = normalize_confidences(phishing_confidence, legitimate_confidence)
 
         # Classify based on the phishing confidence threshold
         if phishing_confidence > PHISHING_THRESHOLD * 100:
