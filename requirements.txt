@@ -7,3 +7,6 @@ scikit-learn
 numpy
 pandas
 torch  # PyTorch for the URL classification model
+transformers
+openpyxl
+datasets
