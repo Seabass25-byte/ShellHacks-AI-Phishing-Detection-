@@ -1,0 +1,9 @@
+python-dotenv==1.0.1
+Flask
+Flask-SocketIO
+Plotly
+LIME
+scikit-learn
+numpy
+pandas
+torch  # PyTorch for the URL classification model
