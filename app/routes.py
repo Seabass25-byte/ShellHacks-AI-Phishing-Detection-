@@ -1,6 +1,6 @@
 import re
 import torch
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
 import pickle
 from lime.lime_text import LimeTextExplainer
@@ -20,15 +20,13 @@ with open('./model/email_classifier.pkl', 'rb') as f:
 with open('./model/email_vectorizer.pkl', 'rb') as f:
     email_vectorizer = pickle.load(f)
 
-gpt_model = pipeline("text-generation", model="distilgpt2")
-
 PHISHING_THRESHOLD = 0.8
 
 def extract_urls(content):
     url_pattern = re.compile(r'(http[s]?://\S+|www\.\S+)')
     return url_pattern.findall(content)
 
-def generate_lime_explanation(content, model, vectorizer):
+def generate_lime_explanation(content, model, vectorizer, classification):
     explainer = LimeTextExplainer(class_names=['legitimate', 'phishing'])
     
     def predict_proba(texts):
@@ -36,7 +34,15 @@ def generate_lime_explanation(content, model, vectorizer):
         return model.predict_proba(text_vectorized)
     
     explanation = explainer.explain_instance(content, predict_proba, num_features=5)
-    return explanation.as_list()
+    
+    simplified_explanation = f"This email has been classified as {classification}. Here's why:\n"
+    for feature, importance in explanation.as_list():
+        if importance > 0:
+            simplified_explanation += f"- The word '{feature}' suggests this email might be phishing.\n"
+        else:
+            simplified_explanation += f"- The absence of '{feature}' suggests this email might be legitimate.\n"
+    
+    return simplified_explanation
 
 def classify_url(url):
     inputs = url_tokenizer(url, return_tensors="pt", padding='max_length', max_length=64, truncation=True)
@@ -51,30 +57,23 @@ def classify_email(content):
     predicted_proba = email_classifier.predict_proba(email_vectorized)
     return predicted_proba[0][1], predicted_proba[0][0]
 
-def generate_explanation(content, features, classification):
-    # Sort features by absolute importance
-    sorted_features = sorted(features, key=lambda x: abs(x[1]), reverse=True)
-    
-    explanation = f"This email has been classified as {classification}. Here's why:\n\n"
-    
-    for feature, importance in sorted_features:
-        if importance > 0:
-            explanation += f"- The presence of '{feature}' suggests it might be {classification} (importance: {importance:.2f})\n"
-        else:
-            explanation += f"- The absence of '{feature}' suggests it might be {'legitimate' if classification == 'phishing' else 'phishing'} (importance: {abs(importance):.2f})\n"
-    
-    explanation += "\nAdditional analysis:\n"
-    
+def generate_educational_tips(classification):
     if classification == "phishing":
-        explanation += "- Be cautious of emails asking for immediate action or verification.\n"
-        explanation += "- Check the sender's email address carefully.\n"
-        explanation += "- Hover over links (don't click) to see where they actually lead.\n"
-        explanation += "- Be wary of generic greetings like 'Dear Customer'.\n"
+        return [
+            "Be cautious of emails asking for immediate action or verification.",
+            "Check the sender's email address carefully.",
+            "Hover over links (don't click) to see where they actually lead.",
+            "Be wary of generic greetings like 'Dear Customer'."
+        ]
     else:
-        explanation += "- This email appears to be legitimate, but always stay vigilant.\n"
-        explanation += "- If you're unsure, contact the sender through a known, trusted method.\n"
-    
-    return explanation
+        return [
+            "This email appears legitimate, but always stay vigilant.",
+            "If you're unsure, contact the sender through a known, trusted method."
+        ]
+
+@api_bp.route('/')
+def index():
+    return render_template('index.html')
 
 @api_bp.route('/predict', methods=['POST'])
 def predict():
@@ -102,7 +101,8 @@ def predict():
         total_legitimate_confidence += email_legitimate_conf * 100
         count += 1
 
-        lime_features = generate_lime_explanation(content_without_urls, email_classifier, email_vectorizer)
+        # Generate simplified explanation
+        lime_features = generate_lime_explanation(content_without_urls, email_classifier, email_vectorizer, "phishing" if total_phishing_confidence > total_legitimate_confidence else "legitimate")
 
     # Calculate final confidence scores
     if count > 0:
@@ -114,13 +114,14 @@ def predict():
     # Determine final classification
     final_classification = "phishing" if combined_phishing_confidence > PHISHING_THRESHOLD * 100 else "legitimate"
 
-    # Generate explanation
-    if content_without_urls:
-        explanation = generate_explanation(content_without_urls, lime_features, final_classification)
-        result_data['explanation'] = explanation
+    # Generate educational tips
+    educational_tips = generate_educational_tips(final_classification)
 
+    # Prepare response
     result_data['final_result'] = final_classification
     result_data['phishing_confidence'] = combined_phishing_confidence
     result_data['legitimate_confidence'] = combined_legitimate_confidence
+    result_data['explanation'] = lime_features
+    result_data['tips'] = educational_tips
 
     return jsonify(result_data)
