@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Detect Phishing Attempts!</h1>
+    <p>Look at the image below and decide if it's a phishing email or URL.</p>
+    <img id="gameImage" src="" alt="Phishing or Not Phishing Image"/>
+    <div>
+        <button onclick="submitGuess(true)">Phishing</button>
+        <button onclick="submitGuess(false)">Not Phishing</button>
+    </div>
+    <p id="result"></p>
+
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+</html>
