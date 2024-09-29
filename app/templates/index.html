@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Detection Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMj+fA8hVf3htgtH2dU5G7QQO+FLQ4l5+8bd55" crossorigin="anonymous">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,48 +13,27 @@
         form {
             margin-bottom: 20px;
         }
-        #detectionResult, #educationResult {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f4f4f4;
-            border: 1px solid #ddd;
-        }
         #detectionResult {
-            color: #333;
-            background-color: #e0f7fa;
-            font-weight: bold;
-        }
-        #educationResult {
-            color: #2e7d32;
-            background-color: #e8f5e9;
-        }
-        .result-title {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        .confidence {
-            font-weight: bold;
-            margin: 5px 0;
+            white-space: pre-wrap;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
 <body>
     <h1>Phishing Detection Tool</h1>
-
-    <!-- Unified Form for Email and URL Phishing Detection -->
+    
     <form id="detectionForm">
         <label for="inputContent">Enter Email or URL:</label><br><br>
         <textarea id="inputContent" name="content" rows="6" cols="60" placeholder="Enter email content or a URL..."></textarea><br><br>
         <button type="submit">Check for Phishing</button>
     </form>
-
-    <!-- Results Display -->
+    
     <div id="detectionResult"></div>
-    <div id="educationResult"></div>
 
-    <!-- Include external JavaScript from static folder -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
+    <script src="/static/js/script.js"></script>
 </body>
 </html>
+#
