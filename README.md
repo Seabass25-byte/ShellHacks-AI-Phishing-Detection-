@@ -37,18 +37,28 @@ PhishGuard works by analyzing both the **email content** and any **URLs** within
 ## 📝 Project Structure
 
 ```bash
-├── app
-│   ├── static/          # Static files (CSS, images, etc.)
-│   ├── templates/       # HTML templates
-│   ├── __init__.py      # Initialize Flask app
-│   ├── routes.py        # Define routes
-│   ├── run.py           # Main file to run the application
+├── .venv/                     # Virtual environment folder
+├── app/                       # Application source code
+│   ├── static/                # Static files (CSS, images, etc.)
+│   ├── templates/             # HTML templates
+│   ├── __init__.py            # Initialize Flask app
+│   ├── routes.py              # Define routes
+│   ├── run.py                 # Main file to run the application
 │
-├── model/               # Model-related files
+├── data/                      # Data folder (sample emails, datasets)
+│
+├── model/                     # Model-related files
 │   ├── email_classifier.pkl   # Trained phishing detection model
 │   ├── email_vectorizer.pkl   # Vectorizer for email content
 │
-├── data/                # Data folder (sample emails, datasets)
-├── requirements.txt     # Python dependencies
-├── README.md            # Project documentation
-└── .env                 # Environment variables (API keys, config)
+├── results/                   # Results of model training
+│   ├── checkpoint-1000/       # Checkpoint for trained model
+│
+├── training/                  # Model training scripts
+│
+├── .gitattributes             # Git LFS (Large File Storage) attributes
+├── .gitignore                 # Git ignored files
+├── README.md                  # Project documentation
+├── config.py                  # Configuration file for the project
+├── requirements.txt           # Python dependencies
+├── run.py                     # Entry point to run the application
