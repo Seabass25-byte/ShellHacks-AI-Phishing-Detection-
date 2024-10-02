@@ -1,6 +1,6 @@
 # PhishGuard - AI-Powered Phishing Detection Tool
 
-![PhishGuard Logo](link-to-logo-image-if-available)
+![PhishGuard Logo](Phishing.jpg)
 
 **PhishGuard** is an AI-powered phishing detection tool designed to help users identify phishing emails in real time. What makes PhishGuard unique is its ability not only to flag phishing attempts but also to educate users on *why* an email is marked as phishing, empowering them to recognize future attacks.
 
