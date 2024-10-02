@@ -112,12 +112,52 @@
         }
 
         /* Explanation Section */
-        .explanation {
-            font-size: 1.1em;
+        .explanation-section {
             margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            display: none;
         }
 
-        /* Educational Tip Section */
+        .explanation-section h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .indicators-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .indicators-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .indicators-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        .phishing-indicators li::before {
+            color: #dc3545;
+        }
+
+        .legitimate-indicators li::before {
+            color: #28a745;
+        }
+
+        .recommendation-section {
+            margin-top: 15px;
+            padding: 10px;
+            border-left: 4px solid #17a2b8;
+            background-color: #e2f3f5;
+        }
+
+        /* Teaching Moment Section */
         .teaching-moment {
             background-color: #e2e3e5;
             color: #383d41;
@@ -126,6 +166,7 @@
             font-size: 1em;
             margin-top: 10px;
             text-align: center;
+            display: none;
         }
 
         /* Learn More Button */
@@ -149,11 +190,11 @@
             text-align: center;
             font-size: 0.9em;
             color: #777;
-            width: 100%; /* Ensure the footer spans the entire width */
+            width: 100%;
         }
 
         footer p {
-            margin: 0; /* Remove any unwanted margin */
+            margin: 0;
         }
 
         footer a {
@@ -165,7 +206,7 @@
             text-decoration: underline;
         }
 
-        /* Ensure content centers well on smaller devices */
+        /* Media Queries */
         @media (max-width: 600px) {
             .container {
                 padding: 10px;
@@ -185,11 +226,9 @@
                 margin-top: 20px;
             }
         }
-
     </style>
 </head>
 <body>
-
     <div class="container">
         <!-- Header Section -->
         <h1>Phishing Detection Tool</h1>
@@ -211,14 +250,32 @@
         <div id="detectionResult" class="result-box">
             <p id="resultText"></p>
             <p id="confidence"></p>
-            <p id="virustotalResult" style="color: blue;"></p>  <!-- New section for VirusTotal results -->
+            <p id="virustotalResult" style="color: blue;"></p>
         </div>
 
         <!-- Explanation Section -->
-        <div id="explanation" class="explanation"></div>
+        <div id="explanation" class="explanation-section">
+            <h3>Analysis Explanation</h3>
+            <div id="explanationText"></div>
+            
+            <div id="phishingIndicators" style="display:none;">
+                <h3>Potential Phishing Indicators:</h3>
+                <ul class="indicators-list phishing-indicators" id="phishingIndicatorsList"></ul>
+            </div>
+            
+            <div id="legitimateIndicators" style="display:none;">
+                <h3>Factors Suggesting Legitimacy:</h3>
+                <ul class="indicators-list legitimate-indicators" id="legitimateIndicatorsList"></ul>
+            </div>
+            
+            <div id="recommendation" class="recommendation-section">
+                <h3>Recommendation:</h3>
+                <p id="recommendationText"></p>
+            </div>
+        </div>
 
         <!-- Teaching Moment Section -->
-        <div id="teachingMoment" class="teaching-moment" style="display:none;">
+        <div id="teachingMoment" class="teaching-moment">
             <p id="teachingTip"></p>
         </div>
 
@@ -226,7 +283,6 @@
         <div id="learnMore" class="learn-more">
             <a href="education.html">Learn More</a>
         </div>
-
     </div>
 
     <!-- Footer Section -->
