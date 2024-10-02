@@ -1,1 +1,0 @@
-<h1>Booking Page</h1>
