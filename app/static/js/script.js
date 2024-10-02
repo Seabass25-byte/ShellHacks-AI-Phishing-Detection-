@@ -32,6 +32,11 @@ document.getElementById("detectionForm").addEventListener("submit", function(eve
         document.getElementById("resultText").textContent = `Result: ${data.final_result.charAt(0).toUpperCase() + data.final_result.slice(1)} Detected`;
         document.getElementById("confidence").textContent = `Confidence: ${data.phishing_confidence.toFixed(2)}%`;
 
+        // VirusTotal Result
+        if (data.virustotal) {
+            document.getElementById("virustotalResult").textContent = data.virustotal;
+        }
+
         // Explanation
         document.getElementById("explanation").textContent = data.explanation;
 
@@ -55,4 +60,5 @@ document.getElementById("clearButton").addEventListener("click", function() {
     document.getElementById("detectionResult").style.display = 'none';
     document.getElementById("teachingMoment").style.display = 'none';
     document.getElementById("learnMore").style.display = 'none';
+    document.getElementById("virustotalResult").textContent = '';  // Clear VirusTotal result
 });

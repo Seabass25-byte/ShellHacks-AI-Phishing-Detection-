@@ -40,21 +40,40 @@ def preprocess_text(text):
 
 def load_emails(directory, label):
     emails = []
-    for filename in os.listdir(directory):
+    for idx, filename in enumerate(os.listdir(directory)):
         filepath = os.path.join(directory, filename)
         if os.path.isfile(filepath):
             try:
-                with open(filepath, 'r', encoding='latin-1') as file:
-                    content = file.read()
-                    parts = content.split("\n\n", 1)
-                    if len(parts) > 1:
-                        body = parts[1]
-                    else:
-                        body = content
-                    emails.append((preprocess_text(body), label))  # Add label to each email
+                # Attempt to open the file using utf-8 first, then fallback to latin-1
+                try:
+                    with open(filepath, 'r', encoding='utf-8') as file:
+                        content = file.read()
+                except UnicodeDecodeError:
+                    with open(filepath, 'r', encoding='latin-1') as file:
+                        content = file.read()
+
+                # Split headers and body
+                parts = content.split("\n\n", 1)
+                body = parts[1] if len(parts) > 1 else content
+
+                # Skip if body is empty
+                if not body.strip():
+                    print(f"Empty email body in {filename}")
+                    continue
+
+                # Preprocess and add to emails list
+                emails.append((preprocess_text(body), label))
+
+                # Print progress every 1000 emails
+                if idx % 1000 == 0:
+                    print(f"Processed {idx} emails.")
+
             except Exception as e:
                 print(f"Error reading {filepath}: {e}")
+    
     return emails
+
+
 
 
 
