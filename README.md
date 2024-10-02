@@ -8,7 +8,7 @@
 
 Here’s a look at how the PhishGuard phishing detection tool interface looks:
 
-![PhishGuard Interface](images/Phishing Detection Tool.PNG)
+![PhishGuard Interface](Phishing Detection Tool.PNG)
 
 ## 🛠 Features
 
